@@ -5,7 +5,7 @@ describe('template spec', () => {
       cy.get('.btn').click().wait(1000);
       // Verification de redirection
       cy.get('h1').contains('Category index');
-
+      cy.get('.table > tbody > :nth-child(1) > :nth-child(2)').contains('Roman');
       
     })
   })
