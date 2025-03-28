@@ -1,6 +1,6 @@
 describe('Créer une nouvelle catégorie puis changer son nom ', () => {
     it('passes', () => {
-      cy.visit('https://127.0.0.1:8000/category/new')
+      cy.visit('http://127.0.0.1:8000/category/new')
       // Selection de l'input et inscription du nom de la catégorie
       cy.get('#category_label').type('SCI FI');
       // Validation

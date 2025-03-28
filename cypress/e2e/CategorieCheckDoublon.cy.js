@@ -1,6 +1,6 @@
 describe("Vérifier qu'il n'y a pas de doublons dans le nom des catégories", () => {
     it('passes', () => {
-      cy.visit('https://127.0.0.1:8000/category/')
+      cy.visit('http://127.0.0.1:8000/category/')
       // Verification de redirection
       cy.get('h1').contains('Category index');
       // Selection de la ligne correspondante
