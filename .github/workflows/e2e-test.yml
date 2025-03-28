@@ -57,7 +57,7 @@ jobs:
         # installation des services
         services:
             mysql:
-                image: mysql:8.0
+                image: mysql:8.0.30
                 env:
                     MYSQL_ROOT_PASSWORD: root
                     MYSQL_DATABASE: symfony
@@ -69,6 +69,10 @@ jobs:
                     --health-timeout=5s
                     --health-retries=5
         steps:
+            - name: Wait for MySQL
+              run: sleep 10
+            - name: Check MySQL logs
+              run: docker logs $(docker ps -q --filter ancestor=mysql:8.0)
             # récupération du code du repository
             - name: Checkout code
               uses: actions/checkout@v4
@@ -87,7 +91,7 @@ jobs:
                 cp .env .env.test
                 echo "APP_ENV=test" >> .env
                 echo "APP_ENV=test" >> .env.test
-                echo "DATABASE_URL=mysql://root:@127.0.0.1:3307/symfony?serverVersion=8.0.30&charset=utf8mb4" >> .env.test
+                echo "DATABASE_URL=mysql://root:root@127.0.0.1:3307/symfony?serverVersion=8.0.30&charset=utf8mb4" >> .env.test
             
             # installation des dépendances Symfony
             - name: Install PHP dependencies
