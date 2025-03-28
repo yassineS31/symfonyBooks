@@ -87,7 +87,7 @@ jobs:
                 cp .env .env.test
                 echo "APP_ENV=test" >> .env
                 echo "APP_ENV=test" >> .env.test
-                echo "DATABASE_URL=mysql://root:@127.0.0.1:3307/symfonybooks?serverVersion=8.0.30&charset=utf8mb4" >> .env.test
+                echo "DATABASE_URL=mysql://root:@127.0.0.1:3307/symfony?serverVersion=8.0.30&charset=utf8mb4" >> .env.test
             
             # installation des dépendances Symfony
             - name: Install PHP dependencies
