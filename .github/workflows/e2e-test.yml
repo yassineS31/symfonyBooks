@@ -1,17 +1,109 @@
-name: test E2E
+# name: test E2E
+# on:
+#   push:
+#     branches:
+#       - 'main'
+#   pull_request:
+# jobs:
+#   build-and-test:
+#     runs-on: ubuntu-latest
+#     name: Build and test
+#     services:
+#       mysql:
+#         image: mysql:8.0
+#         env:
+#           MYSQL_DATABASE: symfonyworkflows
+#           MYSQL_ROOT_PASSWORD: root
+#           MYSQL_PASSWORD:
+#         ports:
+#           - 3306:3306
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+#       - name: Setup Node
+#         uses: actions/setup-node@v4
+#         with:
+#           project: ./src/
+#       - name: Setup PHP with composer v2
+#         uses: shivammathur/setup-php@v2
+#         with:
+#             php-version: '8.2.4'
+#             tools: composer:v2
+#             extensions: mbstring, intl, pdo_mysql, sodium
+#       - name: Mysql
+#         uses: shivammathur/setup-php@v2
+#       - name: env
+#         run: echo "APP_ENV = test>> .env"
+#       - name: Cypress run 
+#         uses: cypress-io/github-action@v6
+#       - name: Create database
+#         run: php bin/console doctrine:database:create
+#       - name: migration bdd
+#         run: php bin/console doctrine:migration:migrate
+#       - name: run server
+#         run: php -S 127.0.0.1:8000 -t public &
+#       - name: lunch cypress
+#         run: npm run cypress:run
+name: Symfony 7 + Cypress E2E Tests
+
 on:
-  push:
-    branches:
-      - 'main'
-  pull_request:
+    push:
+        branches: [ main ]
+    pull_request:
+        branches: [ main ]
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    name: Build and test
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-      - name: Cypress run 
-        uses: cypress-io/github-action@v6
+    Symfony-test:
+        runs-on: ubuntu-latest
+        # installation des services
+        services:
+            mysql:
+                image: mysql:8.0
+                env:
+                    MYSQL_ROOT_PASSWORD: root
+                    MYSQL_DATABASE: symfony
+                ports:
+                    - 3306:3306
+                options: >-
+                    --health-cmd="mysqladmin ping -h localhost"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
+        steps:
+            # récupération du code du repository
+            - name: Checkout code
+              uses: actions/checkout@v4
+            
+            # configuration de PHP
+            - name: Set up PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                php-version: "8.2.4"
+                extensions: mbstring, intl, pdo_mysql, sodium
+                tools: composer  
+            
+            # paramétrage de l'environnement de test
+            - name: Set up .env for CI
+              run: |
+                cp .env .env.test
+                echo "APP_ENV=test" >> .env
+                echo "APP_ENV=test" >> .env.test
+                echo "DATABASE_URL=mysql://root:root@127.0.0.1:3307/symfony" >> .env.test
+            
+            # installation des dépendances Symfony
+            - name: Install PHP dependencies
+              run: composer install --no-interaction --prefer-dist
+            
+            # migration de la base de données
+            - name: migration DB
+              run: |
+                php bin/console d:d:c
+                php bin/console d:m:m
+            
+            # démarrage du serveur Symfony
+            - name: Run Symfony local server
+              run: |
+                php -S 127.0.0.1:8000 -t public &
+            
+            # Cypress Actions
+            - name : Test Cypress
+              uses: cypress-io/github-action@v6
