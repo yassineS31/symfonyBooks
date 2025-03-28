@@ -10,8 +10,7 @@ describe("Vérifier qu'il n'y a pas de doublons dans le nom des catégories", ()
         if(values.length>value.size){
           throw new Error('Erreur, la valeur existe déjà');
         }
-          cy.log('Enregistrement réussi !')
-        
+          cy.log('Enregistrement réussi !');
       });
 
     })

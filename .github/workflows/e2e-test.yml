@@ -1,0 +1,17 @@
+name: test E2E
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: Build and test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+      - name: Cypress run 
+        uses: cypress-io/github-action@v6
